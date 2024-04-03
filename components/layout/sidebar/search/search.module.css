@@ -1,0 +1,36 @@
+.search {
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  background: #2d2b3f;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.search input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 17px;
+  filter: drop-shadow(0 0 5px #01d9ff7c);
+}
+.search input::placeholder {
+  color: white;
+  filter: none !important;
+}
+.search svg {
+  height: 18px;
+  width: 18px;
+}
+
+@media screen and (max-width: 1100px) {
+  .search {
+    display: none;
+  }
+}

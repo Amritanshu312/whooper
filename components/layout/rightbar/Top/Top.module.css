@@ -1,0 +1,41 @@
+.container h3 {
+  font-size: 18px;
+  font-family: "Sora", sans-serif;
+  font-weight: 500;
+  color: #b4b4b4;
+  margin-bottom: 20px;
+}
+
+.container ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.container ul li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.container ul li .icon {
+  min-width: 40px;
+  height: 40px;
+  background: #43a1af;
+  display: grid;
+  place-content: center;
+  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.container ul li:nth-child(2n + 1) .icon {
+  background: #912794;
+}
+.container ul li:nth-child(3n + 1) .icon {
+  background: #9031d879;
+}

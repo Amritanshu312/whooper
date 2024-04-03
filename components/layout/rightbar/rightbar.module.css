@@ -1,0 +1,23 @@
+.container {
+  width: 100%;
+  max-width: 300px;
+  min-height: 100vh;
+  color: white;
+  padding: 20px;
+  position: relative;
+}
+
+.linesplit {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  height: 2px;
+  width: 100%;
+  background: #fff;
+  opacity: 0.1;
+}
+
+@media screen and (max-width: 1500px) {
+  .container {
+    display: none;
+  }
+}

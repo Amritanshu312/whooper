@@ -1,0 +1,78 @@
+.background {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #16142a;
+  z-index: 99999;
+  height: 100vh;
+  width: 100%;
+}
+.container {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  -webkit-box-reflect: below 2px linear-gradient(#0001, #0004);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.load {
+  width: 200px;
+  height: 200px;
+  background-color: #0d2323;
+  border-radius: 50%;
+  position: relative;
+  animation: animate 2s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.load::before {
+  content: "";
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 255, 249, 0.4));
+  border-top-left-radius: 100px;
+  background-repeat: no-repeat;
+  border-bottom-left-radius: 100px;
+}
+
+.load::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-radius: 50%;
+  bottom: 0;
+  left: 50%;
+  transform: translatex(-50%);
+  background-color: #00fff9;
+  box-shadow: 0 0 10px #00fff9, 0 0 20px #00fff9, 0 0 30px #00fff9,
+    0 0 40px #00fff9, 0 0 50px #00fff9, 0 0 60px #00fff9, 0 0 70px #00fff9,
+    0 0 80px #00fff9, 0 0 90px #00fff9, 0 0 100px #00fff9;
+  z-index: 10;
+}
+
+.load span {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  background-color: #102626;
+  border-radius: 50%;
+}
