@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useEffect, useState, useMemo, useContext } from "react";
+import { createContext, useEffect, useState, useMemo, useContext } from "react";
 import { auth } from "@/config/firebase";
 
 export const userContext = createContext();
@@ -32,6 +32,7 @@ export const UserState = (props) => {
     return () => unsubscribe();
   }, []);
 
+  // Memoize the context value to avoid unnecessary re-renders
   const contextValue = useMemo(() => ({ userInfo, isAuthenticated }), [
     userInfo,
     isAuthenticated,

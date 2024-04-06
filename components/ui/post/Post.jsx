@@ -3,19 +3,25 @@ import { useState } from "react";
 import styles from "./post.module.css"
 import { AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { BiCommentDetail } from "react-icons/bi";
+import { toast } from 'react-toastify';
 
 import { compareTime } from "@/utils/Time";
 import SocialOption from "./socialOption/SocialOption";
 import { LikePost } from "@/utils/handlePost";
+import { useUserContext } from "@/context/getUserInfo";
 
 const Post = ({ post }) => {
-  const { id, uid, likedBy, comments, description, photo, createdAt, user } = post
+  const { isAuthenticated, userInfo } = useUserContext()
+  const { uid } = userInfo
+  const { id, likedBy, comments, description, photo, createdAt, user, uid: UserUID } = post
   const [liked, setLiked] = useState(likedBy ? likedBy.includes(uid) : false);
   const [likeCount, setLikeCount] = useState(likedBy ? likedBy.length : 0);
 
 
   const handleLikeClick = async () => {
     try {
+      if (!isAuthenticated || !uid) return toast("🔒 Please login first to like! 🔑")
+
       setLiked(prev => !prev);
       setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
 
@@ -68,7 +74,7 @@ const Post = ({ post }) => {
           <div className={styles.comment}><BiCommentDetail /> {comments.length}</div>
         </div>
 
-        <SocialOption info={{ id, uid }} />
+        <SocialOption info={{ id, UserUID }} />
 
       </div>
     </div>

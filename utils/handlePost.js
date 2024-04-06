@@ -1,62 +1,74 @@
 import { db } from "@/config/firebase";
 import { arrayRemove, getDoc, increment, serverTimestamp } from "firebase/firestore";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-
-// Define rate limiting parameters
-const RATE_LIMIT_INTERVAL = 60 * 1000; // 1 minute
-const MAX_LIKES_PER_INTERVAL = 40; // Maximum likes per user within the interval
-
-// Track likes per user within the rate limit interval
-const likeTracker = {};
+import { toast } from 'react-toastify';
 
 export const LikePost = async (postID, userID) => {
   try {
-    // Check if the user has exceeded the rate limit
-    const now = Date.now();
-    if (!likeTracker[userID]) {
-      likeTracker[userID] = { lastLiked: now, count: 1 };
-    } else {
-      const { lastLiked, count } = likeTracker[userID];
-      if (now - lastLiked < RATE_LIMIT_INTERVAL && count >= MAX_LIKES_PER_INTERVAL) {
-        throw new Error("You've reached the maximum likes allowed within a short period. Please try again later.");
-      } else {
-        likeTracker[userID] = { lastLiked: now, count: count + 1 };
-      }
+    if (!userID) {
+      throw new Error("User ID is not provided. Please login first to like!");
+    }
+    if (!postID) {
+      throw new Error("Post ID is not provided. Post might not be found!");
     }
 
-    const documentRef = doc(db, "posts", postID);
+    const postRef = doc(db, "posts", postID);
 
-    // Get the document snapshot
-    const docSnapshot = await getDoc(documentRef);
+    const postSnapshot = await getDoc(postRef);
+    if (!postSnapshot.exists()) {
+      throw new Error("Post not found.");
+    }
 
-    // Check if the document exists
-    if (docSnapshot.exists()) {
-      const postData = docSnapshot.data();
-      const userLiked = postData.likes && postData.likedBy.includes(userID);
+    const postData = postSnapshot.data();
+    const likedByUser = postData.likedBy?.includes(userID);
 
-      if (userLiked) {
-        // If the user has already liked the post, remove like
-        await updateDoc(documentRef, {
-          likes: increment(-1),
-          likedBy: arrayRemove(userID)
-        });
-        // Return false to indicate that the post is unliked now
-        return false;
-      } else {
-        // If the user hasn't liked the post, add like
-        await updateDoc(documentRef, {
-          likes: increment(1),
-          likedBy: arrayUnion(userID), // Add the user ID to the likedBy array
-          lastLikedAt: serverTimestamp() // Update last liked timestamp
-        });
-        // Return true to indicate that the post is liked now
-        return true;
-      }
+    if (likedByUser) {
+      await updateDoc(postRef, {
+        likes: increment(-1),
+        likedBy: arrayRemove(userID)
+      });
+      toast.success('Post unliked successfully!');
     } else {
-      throw new Error("Post not found");
+      await updateDoc(postRef, {
+        likes: increment(1),
+        likedBy: arrayUnion(userID)
+      });
+      toast.success('Post liked successfully!');
     }
   } catch (error) {
-    console.error('Error updating document: ', error.message);
-    throw error; // Rethrow the error for handling in the calling function
+    console.error('Error toggling like: ', error.message);
+    toast.error(error.message); // Display error message using toast
   }
 }
+
+
+
+
+export const handleImageUpload = function () {
+  if (!file) {
+    alert("Please choose a file first!")
+  }
+
+  const storageRef = ref(storage, `/posts/${file.name}`)
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const percent = Math.round(
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      );
+
+      // update progress
+      setPercent(percent);
+    },
+    (err) => console.log(err),
+    () => {
+      // download url
+      getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+        console.log(url);
+      });
+    }
+  );
+}
+

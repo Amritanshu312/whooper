@@ -3,6 +3,8 @@ import "./globals.css";
 import Sidebar from "@/components/layout/sidebar/Sidebar";
 import Rightbar from "@/components/layout/rightbar/Rightbar";
 import { UserState } from "@/context/getUserInfo";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +21,7 @@ export default function RootLayout({ children }) {
           <UserState>
             <Sidebar />
             {children}
+            <ToastContainer draggable theme="dark" />
             <Rightbar />
           </UserState>
         </div>

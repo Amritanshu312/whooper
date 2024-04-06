@@ -3,7 +3,10 @@ import { addPost } from "@/utils/getPosts";
 import styles from "./createPost.module.css"
 import { useState } from "react"
 import { FaPlus } from "react-icons/fa6";
+import { MdClose } from "react-icons/md";
 import { motion } from "framer-motion"
+import Image from "next/image";
+import { toast } from 'react-toastify';
 
 const CreatePost = ({ info }) => {
   const { isAuthenticated, userInfo } = info
@@ -14,10 +17,11 @@ const CreatePost = ({ info }) => {
 
 
   const handleClick = (e) => {
-    if (e.target.className.toLowerCase().includes("bgcontainer")) {
+    if (e?.target?.className && typeof e.target.className === 'string' && e.target.className.toLowerCase().includes("bgcontainer")) {
       setIsVisible(prev => !prev)
     }
   }
+
 
   const dropIn = {
     hidden: {
@@ -38,7 +42,6 @@ const CreatePost = ({ info }) => {
 
   const handlePhoto = (e) => {
     setPhoto(e.target.files[0])
-    console.log(e.target.files[0]);
   }
 
   const handlePost = () => {
@@ -48,9 +51,12 @@ const CreatePost = ({ info }) => {
         throw new Error('Missing user ID or description');
       }
       const data = { uid, description };
-      addPost(data, isAuthenticated);
-      setIsVisible(false)
-      setDescription("")
+      const res = addPost(data, isAuthenticated);
+      if (res) {
+        toast("🦄 Post created successfully")
+        setIsVisible(false)
+        setDescription("")
+      } else toast(res.error)
     } catch (error) {
     }
   };
@@ -77,7 +83,14 @@ const CreatePost = ({ info }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></textarea>
-
+            {
+              photo ? <div className={styles.Uploadedimage}>
+                <Image src={URL.createObjectURL(photo)} alt="post" width={65} height={65} />
+                <div className={styles.close} onClick={() => setPhoto(null)}>
+                  <MdClose />
+                </div>
+              </div> : null
+            }
             <div className={styles.option}>
               <input type="file" accept="image/*" id="photoUpload" onChange={handlePhoto} style={{ display: "none" }} />
               <label htmlFor="photoUpload">Photo</label>
