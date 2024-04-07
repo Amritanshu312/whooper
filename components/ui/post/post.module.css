@@ -45,15 +45,16 @@
   object-fit: cover;
 }
 
-.image img {
+.image {
   position: relative;
-  width: 100%;
-  height: auto;
-  max-height: 500px;
+}
+
+.image img {
+  position: relative !important;
   object-fit: cover;
-  overflow: hidden;
   border-radius: 50px;
   margin-top: 10px;
+  max-height: 500px;
 }
 
 .social {

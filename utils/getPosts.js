@@ -1,6 +1,8 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, limit, orderBy, query, serverTimestamp, startAt } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { db, storage } from "@/config/firebase";
 import { useState, useEffect } from "react";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { toast } from 'react-toastify';
 
 export const GetPosts = (datasToFetch = 0) => {
   const [posts, setPosts] = useState([]);
@@ -58,30 +60,86 @@ export const GetPosts = (datasToFetch = 0) => {
 
 
 
-
-export const addPost = async (postData, isAuthenticated) => {
+export const addPost = async (postData, isAuthenticated, file = null) => {
+  // Check if the user is authenticated
   if (!isAuthenticated) {
     throw new Error("User is not authenticated. Please log in to add a post.");
   }
 
+  console.log(file);
+
+  let imageUrl = "";
+  // If file exists, upload it
+  if (file) {
+    try {
+      const uploadTask = uploadBytesResumable(
+        ref(storage, `posts/${Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100}`),
+        file
+      );
+
+      await toast.promise(
+        new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              // You can add your progress logic here if needed
+            },
+            (error) => {
+              console.error("Error uploading image: ", error);
+              reject(error);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref)
+                .then((url) => {
+                  imageUrl = url;
+                  resolve(url);
+                })
+                .catch((error) => {
+                  console.error("Error getting download URL: ", error);
+                  reject(error);
+                });
+            }
+          );
+        }),
+        {
+          pending: 'Post is uploading',
+          success: '🦄 Post created successfully',
+          error: 'Error uploading image 🤯'
+        }
+      );
+
+      await uploadTask;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+      throw new Error("Failed to upload image. Please try again later.");
+    }
+  }
+
   try {
+    console.log(imageUrl);
     const postDocData = {
       uid: postData.uid,
       description: postData.description,
       likes: 0,
       random: Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100,
       comments: [],
-      photo: postData?.photo || "",
+      photo: imageUrl || "",
       createdAt: serverTimestamp()
     };
 
+    // Add post to Firestore
     await addDoc(collection(db, "posts"), postDocData);
+
+    // Return success response
     return { success: true };
   } catch (error) {
     console.error("Error adding post: ", error);
-    return { success: false, error: "Failed to add post. Please try again later." };
+    throw new Error("Failed to add post. Please try again later.");
   }
 };
+
+
+
 
 export const deletePost = async (id, userUID) => {
   try {
@@ -92,7 +150,7 @@ export const deletePost = async (id, userUID) => {
     if (!userUID) {
       throw new Error("User UID is not provided. Please login first to delete a post.");
     }
-    
+
     const postDocRef = doc(db, "posts", id);
     await deleteDoc(postDocRef);
   } catch (error) {

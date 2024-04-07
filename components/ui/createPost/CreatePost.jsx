@@ -44,18 +44,22 @@ const CreatePost = ({ info }) => {
     setPhoto(e.target.files[0])
   }
 
-  const handlePost = () => {
+  const handlePost = async () => {
     try {
       const { uid } = userInfo;
       if (!uid || !description) {
-        throw new Error('Missing user ID or description');
+        return toast('Missing user ID or description');
       }
       const data = { uid, description };
-      const res = addPost(data, isAuthenticated);
-      if (res) {
-        toast("🦄 Post created successfully")
+      const res = await addPost(data, isAuthenticated, photo);
+      if (res.success) {
+        if (!photo) toast("🦄 Post created successfully")
         setIsVisible(false)
         setDescription("")
+
+        if (res?.data?.photo || photo) {
+          setPhoto(null)
+        }
       } else toast(res.error)
     } catch (error) {
     }

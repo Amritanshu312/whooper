@@ -58,8 +58,9 @@ const Post = ({ post }) => {
 
         {photo === '' ? null :
           <div className={styles.image}>
-            <Image src={photo} alt="post" layout="responsive" width={5000} height={5000} />
+            <Image src={photo} alt="post" fill />
           </div>}
+
       </div>
 
       <div className={styles.social}>
