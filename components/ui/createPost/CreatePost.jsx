@@ -19,6 +19,7 @@ const CreatePost = ({ info }) => {
   const handleClick = (e) => {
     if (e?.target?.className && typeof e.target.className === 'string' && e.target.className.toLowerCase().includes("bgcontainer")) {
       setIsVisible(prev => !prev)
+      if (isVisible) setPhoto(null)
     }
   }
 
@@ -47,11 +48,12 @@ const CreatePost = ({ info }) => {
   const handlePost = async () => {
     try {
       const { uid } = userInfo;
-      if (!uid || !description) {
-        return toast('Missing user ID or description');
-      }
+      if (!uid) return toast('Log in First to upload');
+      if (!description) return toast('Description is required');
+
+
       const data = { uid, description };
-      const res = await addPost(data, isAuthenticated, photo);
+      const res = await addPost(data, isAuthenticated, photo, uid);
       if (res.success) {
         if (!photo) toast("🦄 Post created successfully")
         setIsVisible(false)

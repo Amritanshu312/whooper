@@ -58,7 +58,7 @@ const Post = ({ post }) => {
 
         {photo === '' ? null :
           <div className={styles.image}>
-            <Image src={photo} alt="post" fill />
+            <Image src={photo} alt="post" quality={60} fill />
           </div>}
 
       </div>

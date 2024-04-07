@@ -3,6 +3,7 @@ import { db, storage } from "@/config/firebase";
 import { useState, useEffect } from "react";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from 'react-toastify';
+import { checkFile, resizeFile } from "./ImageHandling";
 
 export const GetPosts = (datasToFetch = 0) => {
   const [posts, setPosts] = useState([]);
@@ -60,21 +61,23 @@ export const GetPosts = (datasToFetch = 0) => {
 
 
 
-export const addPost = async (postData, isAuthenticated, file = null) => {
+export const addPost = async (postData, isAuthenticated, file = null, uid) => {
   // Check if the user is authenticated
   if (!isAuthenticated) {
     throw new Error("User is not authenticated. Please log in to add a post.");
   }
 
-  console.log(file);
 
   let imageUrl = "";
-  // If file exists, upload it
+
   if (file) {
+    if (!checkFile(file)) return
+    const compressFile = await resizeFile(file)
+
     try {
       const uploadTask = uploadBytesResumable(
-        ref(storage, `posts/${Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100}`),
-        file
+        ref(storage, `posts/${uid}/${Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100}`),
+        compressFile,
       );
 
       await toast.promise(
@@ -116,7 +119,6 @@ export const addPost = async (postData, isAuthenticated, file = null) => {
   }
 
   try {
-    console.log(imageUrl);
     const postDocData = {
       uid: postData.uid,
       description: postData.description,
