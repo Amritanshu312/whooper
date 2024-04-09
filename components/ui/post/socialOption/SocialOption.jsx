@@ -6,12 +6,12 @@ import { useUserContext } from "@/context/getUserInfo";
 const SocialOption = ({ info }) => {
   const { isAuthenticated, userInfo } = useUserContext()
   const { uid: userUID } = userInfo
-  const { id, UserUID: uid } = info
+  const { id, UserUID: uid, photo, photoID } = info
 
   const handleDelete = (id) => {
     const res = confirm("Are you sure you want to delete this post?")
     if (!res) return
-    deletePost(id, userUID)
+    deletePost(id, userUID, photo, photoID)
   }
 
   return userUID === uid && isAuthenticated ? (

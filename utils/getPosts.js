@@ -1,7 +1,7 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, limit, orderBy, query, serverTimestamp, startAt } from "firebase/firestore";
 import { db, storage } from "@/config/firebase";
 import { useState, useEffect } from "react";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from 'react-toastify';
 import { checkFile, resizeFile } from "./ImageHandling";
 
@@ -66,6 +66,7 @@ export const addPost = async (postData, isAuthenticated, file = null, uid) => {
   if (!isAuthenticated) {
     throw new Error("User is not authenticated. Please log in to add a post.");
   }
+  const randomINT = Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100
 
 
   let imageUrl = "";
@@ -76,7 +77,7 @@ export const addPost = async (postData, isAuthenticated, file = null, uid) => {
 
     try {
       const uploadTask = uploadBytesResumable(
-        ref(storage, `posts/${uid}/${Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100}`),
+        ref(storage, `${uid}/posts/${randomINT}`),
         compressFile,
       );
 
@@ -123,7 +124,7 @@ export const addPost = async (postData, isAuthenticated, file = null, uid) => {
       uid: postData.uid,
       description: postData.description,
       likes: 0,
-      random: Math.floor(Math.random() * (99 * 99 * 345 - 100 + 1)) + 100,
+      random: randomINT,
       comments: [],
       photo: imageUrl || "",
       createdAt: serverTimestamp()
@@ -143,19 +144,41 @@ export const addPost = async (postData, isAuthenticated, file = null, uid) => {
 
 
 
-export const deletePost = async (id, userUID) => {
-  try {
-    if (!id) {
-      throw new Error("No ID provided for deleting post");
-    }
+export const deletePost = (id, userUID, photo, photoID) => {
+  return toast.promise(
+    new Promise((resolve, reject) => {
+      if (!id) {
+        reject(new Error("No ID provided for deleting post"));
+        return;
+      }
 
-    if (!userUID) {
-      throw new Error("User UID is not provided. Please login first to delete a post.");
-    }
+      if (!userUID) {
+        reject(new Error("User UID is not provided. Please login first to delete a post."));
+        return;
+      }
 
-    const postDocRef = doc(db, "posts", id);
-    await deleteDoc(postDocRef);
-  } catch (error) {
-    console.error("Error deleting post:", error.message);
-  }
+      const deletionPromises = [];
+
+      if (photo) {
+        const desertRef = ref(storage, `${userUID}/posts/${photoID}`);
+        deletionPromises.push(deleteObject(desertRef));
+      }
+
+      const postDocRef = doc(db, "posts", id);
+      deletionPromises.push(deleteDoc(postDocRef));
+
+      Promise.all(deletionPromises)
+        .then(() => {
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
+        });
+    }),
+    {
+      loading: "Deleting post...",
+      success: "Post deleted successfully",
+      error: (error) => `Error deleting post: ${error.message}`,
+    }
+  );
 };

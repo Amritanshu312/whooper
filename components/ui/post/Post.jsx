@@ -13,7 +13,7 @@ import { useUserContext } from "@/context/getUserInfo";
 const Post = ({ post }) => {
   const { isAuthenticated, userInfo } = useUserContext()
   const { uid } = userInfo
-  const { id, likedBy, comments, description, photo, createdAt, user, uid: UserUID } = post
+  const { id, likedBy, comments, description, photo, createdAt, user, uid: UserUID, random: photoID } = post
   const [liked, setLiked] = useState(likedBy ? likedBy.includes(uid) : false);
   const [likeCount, setLikeCount] = useState(likedBy ? likedBy.length : 0);
 
@@ -25,7 +25,7 @@ const Post = ({ post }) => {
       setLiked(prev => !prev);
       setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
 
-      const isLiked = await LikePost(id, uid)
+      await LikePost(id, uid)
     } catch (error) {
       console.error('Error liking post:', error.message);
       setLiked(prev => !prev);
@@ -55,7 +55,6 @@ const Post = ({ post }) => {
         <div className={styles.description}>
           {description}
         </div>
-
         {photo === '' ? null :
           <div className={styles.image}>
             <Image src={photo} alt="post" quality={60} fill />
@@ -75,7 +74,7 @@ const Post = ({ post }) => {
           <div className={styles.comment}><BiCommentDetail /> {comments.length}</div>
         </div>
 
-        <SocialOption info={{ id, UserUID }} />
+        <SocialOption info={{ id, UserUID, photo, photoID }} />
 
       </div>
     </div>

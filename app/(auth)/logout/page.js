@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/config/firebase"; // Assuming auth is correctly exported from your firebase configuration
 import { useRouter } from "next/navigation"; // Changed from "next/navigation" to "next/router"
+import Loading from "@/components/ui/loading/Loading";
 
 const Logout = () => {
   const router = useRouter(); // Changed to useRouter
@@ -30,7 +31,7 @@ const Logout = () => {
     }
   };
 
-  return <div>Logging You Out...</div>;
+  return <Loading />;
 };
 
 export default Logout;
