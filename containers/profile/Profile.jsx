@@ -1,6 +1,12 @@
+import ProfileInfo from "@/components/ui/profile/Profile"
+import styles from "./profile.module.css"
+
 const Profile = () => {
   return (
-    <div>Profile</div>
+    <div className={styles.container}>
+      <ProfileInfo />
+      <p className={`highlight ${styles.highlight}`}>5 POSTS</p>
+    </div>
   )
 }
 

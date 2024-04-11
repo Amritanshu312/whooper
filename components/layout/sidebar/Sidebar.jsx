@@ -74,7 +74,9 @@ const Sidebar = () => {
         animation: isMobile ? isMenuOpen ? 'open 0.5s ease-in-out' : 'close 0.5s ease-in-out' : ''
       }}
     >
-      <div className={styles.logo}>Whooper</div>
+      <div className={styles.logo}>
+        <Link href="/">Whooper</Link>
+      </div>
       <Search />
       <section className={styles.general}>
         <h3>General</h3>

@@ -1,7 +1,12 @@
-const Profile = () => {
+import Profile from "@/containers/profile/Profile"
+
+
+const PageProfile = () => {
   return (
-    <Profile />
+    <>
+      <Profile />
+    </>
   )
 }
 
-export default Profile
+export default PageProfile

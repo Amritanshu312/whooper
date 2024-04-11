@@ -1,0 +1,10 @@
+.container {
+  width: 100%;
+}
+
+.highlight {
+  width: -webkit-fill-available;
+  width: -moz-fill-available;
+  margin-inline: 52px;
+  margin-top: 115px;
+}

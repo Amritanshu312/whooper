@@ -1,0 +1,49 @@
+.container {
+  margin-top: 20px;
+  width: 100%;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  height: max-content;
+}
+
+.banner {
+  margin-inline: 30px;
+  margin-right: 80px;
+}
+
+.banner img {
+  margin-inline: 30px;
+  object-fit: cover;
+  border-radius: 30px;
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  bottom: -100px;
+  margin-left: 7rem;
+}
+
+.info .name {
+  font-size: 30px;
+  font-weight: 500;
+  font-family: "poppins", sans-serif;
+  color: white;
+  margin-top: 4rem;
+}
+
+.info .email {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "poppins", sans-serif;
+  color: #b4b4b4;
+}
+
+.info .profile img {
+  border-radius: 50%;
+  object-fit: cover;
+}
