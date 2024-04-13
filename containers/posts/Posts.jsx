@@ -12,7 +12,6 @@ const Posts = () => {
   const [itemsFetched, setItemsFetched] = useState(0)
   const { posts } = GetPosts(itemsFetched)
 
-
   const handleLoadMore = () => {
     setItemsFetched(prev => prev + 6)
   }

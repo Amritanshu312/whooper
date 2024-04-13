@@ -1,23 +1,30 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, limit, orderBy, query, serverTimestamp, startAt } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, limit, orderBy, query, serverTimestamp, startAt, where } from "firebase/firestore";
 import { db, storage } from "@/config/firebase";
 import { useState, useEffect } from "react";
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { toast } from 'react-toastify';
 import { checkFile, resizeFile } from "./ImageHandling";
 
-export const GetPosts = (datasToFetch = 0) => {
+export const GetPosts = (datasToFetch = 0, uid = null) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true); // Assuming initially loading is true
   const [error, setError] = useState(null);
-
+  console.log(uid);
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      query(
-        collection(db, "posts"),
-        orderBy("random", "asc"),
-        limit(datasToFetch === 0 ? 6 : 2 * datasToFetch),
-        startAt(datasToFetch)
-      ),
+      uid ?
+        query(collection(db, "posts"),
+          orderBy("random", "asc"),
+          limit(datasToFetch === 0 ? 6 : 2 * datasToFetch),
+          startAt(datasToFetch),
+          where("uid", "==", uid))
+        :
+        query(
+          collection(db, "posts"),
+          orderBy("random", "asc"),
+          limit(datasToFetch === 0 ? 6 : 2 * datasToFetch),
+          startAt(datasToFetch)
+        ),
       (querySnapshot) => {
         const postPromises = querySnapshot.docs.map(async (docSnap) => {
           const postData = docSnap.data();
