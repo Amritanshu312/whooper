@@ -15,6 +15,12 @@
   padding: 2% 6%;
 }
 
+.EditIntroSection {
+  margin-top: 115px;
+  display: flex;
+  gap: 20px;
+}
+
 .container::-webkit-scrollbar {
   display: none;
 }
